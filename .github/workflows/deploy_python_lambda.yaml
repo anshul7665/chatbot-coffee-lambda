@@ -30,11 +30,18 @@ jobs:
 
       - name: Build source code using setup tools
         run: |
-          # Install dependencies
-          pip install -r requirements.txt
-
-          # Build
-          python -m build
+          # Create package directory
+          mkdir -p package
+          
+          # Install dependencies to package directory
+          pip install -r requirements.txt -t package/
+          
+          # Copy source code to package
+          cp -r *.py chatbot_lib/ data/ package/
+          
+          # Create dist directory and zip everything
+          mkdir -p dist
+          cd package && zip -r ../dist/deployment-package.zip . && cd ..
         working-directory: lambda/python-monocle-s3-langchain/coffee-chatbot-python
 
       - name: Configure AWS credentials
