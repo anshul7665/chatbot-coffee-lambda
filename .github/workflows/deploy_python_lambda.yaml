@@ -1,0 +1,47 @@
+name: Deploy Coffee Chatbot Python to Lambda
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+inputs:
+  AWS_REGION: us-east-1
+  FUNCTION_NAME: okahu-demo-coffee-chatbot-python
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Build source code using setup tools
+        run: |
+          # Install dependencies
+          pip install -r requirements.txt
+
+          # Build
+          python -m build
+        working-directory: lambda/python-monocle-s3-langchain/coffee-chatbot-python
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: arn:aws:iam::390041016107:role/GH_ACTIONS_TRUST_ROLE
+          aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: Deploy Lambda Function
+        uses: aws-actions/aws-lambda-deploy@v1.1.0
+        with:
+          function-name: ${{ inputs.FUNCTION_NAME }}
+          code-artifacts-dir: lambda/python-monocle-s3-langchain/coffee-chatbot-python/dist
+          handler: app.lambda_handler
+          runtime: python3.12 
