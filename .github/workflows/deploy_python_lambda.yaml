@@ -53,6 +53,7 @@ jobs:
         uses: aws-actions/aws-lambda-deploy@v1.1.0
         with:
           function-name: ${{ inputs.FUNCTION_NAME }}
+          code-artifacts-dir: lambda/python-monocle-s3-langchain/coffee-chatbot-python
           s3-bucket: okahu-lambda-deployments
           s3-key: coffee-chatbot-python/deployment-package.zip
           handler: app.lambda_handler
