@@ -35,7 +35,7 @@ jobs:
           # Create package directory
           mkdir -p package
           # Install dependencies to package directory
-          npm install --production --prefix package
+          npm install --production --prefix ./package package.json
           # Copy source files to package directory
           cp *.js package/
           cp -r data package/
