@@ -1,0 +1,58 @@
+name: Deploy Coffee Chatbot TypeScript to Lambda
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      AWS_REGION:
+        description: 'AWS Region'
+        required: true
+        default: 'us-east-1'
+      FUNCTION_NAME:
+        description: 'Lambda Function Name'
+        required: true
+        default: 'okahu-demo-coffee-chatbot-typescript'
+
+permissions:
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build source code and package dependencies
+        run: |
+          # Create package directory
+          mkdir -p package
+          # Install dependencies to package directory
+          npm install --production --prefix package
+          # Copy source files to package directory
+          cp *.js package/
+          cp -r data package/
+        working-directory: lambda/monocle-s3-langchain/coffee-chatbot-typescript
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          role-to-assume: arn:aws:iam::390041016107:role/GH_ACTIONS_TRUST_ROLE
+          aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: Deploy Lambda Function
+        uses: aws-actions/aws-lambda-deploy@v1.1.0
+        with:
+          function-name: ${{ inputs.FUNCTION_NAME }}
+          code-artifacts-dir: lambda/monocle-s3-langchain/coffee-chatbot-typescript/package
+          s3-bucket: okahu-lambda-deployments
+          s3-key: coffee-chatbot-typescript/deployment-package.zip
+          handler: app.handler
+          runtime: nodejs20.x 
