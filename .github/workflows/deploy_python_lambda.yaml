@@ -33,14 +33,8 @@ jobs:
           mkdir -p package
           
           # Install dependencies to package directory
-          pip install -r requirements.txt -t package/
-          
-          # Copy source code to package
-          cp -r *.py chatbot_lib/ data/ package/
-          
-          # Create dist directory and zip everything
-          mkdir -p dist
-          cd package && zip -r ../dist/deployment-package.zip . && cd ..
+          pip install -r requirements.txt -t ./
+      
         working-directory: lambda/python-monocle-s3-langchain/coffee-chatbot-python
 
       - name: Configure AWS credentials
@@ -53,6 +47,6 @@ jobs:
         uses: aws-actions/aws-lambda-deploy@v1.1.0
         with:
           function-name: ${{ inputs.FUNCTION_NAME }}
-          code-artifacts-dir: lambda/python-monocle-s3-langchain/coffee-chatbot-python/dist
+          code-artifacts-dir: lambda/python-monocle-s3-langchain/coffee-chatbot-python
           handler: app.lambda_handler
           runtime: python3.12 
