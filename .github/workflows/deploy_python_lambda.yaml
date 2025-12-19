@@ -1,9 +1,6 @@
 name: Deploy Coffee Chatbot Python to Lambda
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       AWS_REGION:
@@ -15,10 +12,12 @@ on:
         required: true
         default: 'okahu-demo-coffee-chatbot-python'
 
+permissions:
+      id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
