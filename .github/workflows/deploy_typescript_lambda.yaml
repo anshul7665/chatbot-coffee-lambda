@@ -29,13 +29,11 @@ jobs:
 
       - name: Build source code and package dependencies
         run: |
-          # Create package directory
-          mkdir -p package
           # Install dependencies to package directory
-          npm install --production --prefix ./package package.json
+          npm install --production -D @types/node
           # Copy source files to package directory
-          cp *.js package/
-          cp -r data package/
+          #cp *.js package/
+          #cp -r data package/
         working-directory: lambda/monocle-s3-langchain/coffee-chatbot-typescript
 
       - name: Configure AWS credentials
