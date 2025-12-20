@@ -49,5 +49,5 @@ jobs:
           code-artifacts-dir: lambda/monocle-s3-langchain/coffee-chatbot-typescript/
           s3-bucket: okahu-lambda-deployments
           s3-key: coffee-chatbot-typescript/deployment-package.zip
-          handler: app.handler
+          handler: app.lambdaHandler
           runtime: nodejs20.x 
